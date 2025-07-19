@@ -4,6 +4,7 @@ export type Transaction = {
     date: string;
     description: string;
     amount: number;
+    isAnomoly?: boolean;
   };
   
   export function parseCsv(text: string): Transaction[] {
@@ -40,5 +41,12 @@ export type Transaction = {
     }
   
     return rows;
+  }
+
+  export function markAnomalies(data: Transaction[]): Transaction[] {
+    return data.map((tx) => ({
+      ...tx,
+      isAnomaly: Math.abs(tx.amount) > 1000,
+    }));
   }
   

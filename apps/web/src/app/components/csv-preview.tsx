@@ -1,4 +1,4 @@
-import type { Transaction } from "../../lib/parseCsv"
+import type { Transaction, markAnomalies } from "../../lib/parseCsv"
 
 interface CsvPreviewProps {
   data: Transaction[]
@@ -34,6 +34,11 @@ export function CsvPreview({ data, fileName }: CsvPreviewProps) {
                   <td className="px-6 py-4 text-sm text-slate-700">{tx.description}</td>
                   <td className="px-6 py-4 text-sm text-slate-700">
                     {tx.amount < 0 ? "-" : ""}${Math.abs(tx.amount).toFixed(2)}
+                  </td>
+
+                  {/* ✅ New column for anomaly */}
+                  <td className="px-6 py-4 text-sm text-red-600 font-semibold">
+                    {tx.isAnomoly ? "⚠️ Unusual" : ""}
                   </td>
                 </tr>
               ))}

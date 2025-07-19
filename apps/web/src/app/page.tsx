@@ -5,7 +5,7 @@ import { CsvUpload } from "./components/csv-upload"
 import { CsvPreview } from "./components/csv-preview"
 import { Navbar } from "./components/navbar"
 import { Footer } from "./components/footer"
-import { parseCsv, Transaction } from "../lib/parseCsv"
+import { parseCsv, Transaction, markAnomalies } from "../lib/parseCsv"
 
 export default function HomePage() {
   const [csvData, setCsvData] = useState<Transaction[] | null>(null)
@@ -13,13 +13,15 @@ export default function HomePage() {
 
   const handleFileDrop = (file: File) => {
     setFileName(file.name)
-
+  
     const reader = new FileReader()
     reader.onload = (e) => {
       const text = e.target?.result as string
       const parsed = parseCsv(text)
-      setCsvData(parsed) // render all rows
+      const flagged = markAnomalies(parsed)     // ✅ Add this line
+      setCsvData(flagged)
     }
+  
     reader.readAsText(file)
   }
 

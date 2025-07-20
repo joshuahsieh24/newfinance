@@ -1,52 +1,40 @@
-// apps/web/src/lib/parseCsv.ts
+export interface Transaction {
+  date: string
+  description: string
+  amount: number
+  category?: string
+  merchant?: string
+  step?: number
+  isAnomaly?: boolean
+  modelScore?: number | null
+  modelFlag?: boolean
+  advice?: string | null
+  gptInsight?: string | null
+}
 
-export type Transaction = {
-    date: string;
-    description: string;
-    amount: number;
-    isAnomoly?: boolean;
-  };
-  
-  export function parseCsv(text: string): Transaction[] {
-    // Split CSV text by line and remove any leading/trailing whitespace
-    const lines = text.trim().split("\n");
-  
-    const rows: Transaction[] = [];
-  
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-  
-      // Skip blank lines
-      if (!line) continue;
-  
-      // Split the row by comma and strip quotes
-      const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
-  
-      // If this is a header row (first row with "date"), skip it
-      if (i === 0 && values[0].toLowerCase().includes("date")) {
-        continue;
-      }
-  
-      // Destructure and validate
-      const [date, description, amountStr] = values;
-      const amount = parseFloat(amountStr.replace(/[^0-9.-]/g, "")); // strip $/commas/etc
-  
-      if (!date || !description || isNaN(amount)) continue;
-  
-      rows.push({
-        date,
-        description,
-        amount,
-      });
+export function parseCsv(csv: string): Transaction[] {
+  const lines = csv.trim().split("\n")
+  const [header, ...rows] = lines
+  const headers = header.split(",").map(h => h.trim().toLowerCase())
+
+  return rows.map((line) => {
+    const values = line.split(",")
+    const date = values[headers.indexOf("date")]?.trim()
+    const description = values[headers.indexOf("description")]?.trim()
+    const amountStr = values[headers.indexOf("amount")]?.trim()
+    const amount = parseFloat(amountStr)
+
+    return {
+      date,
+      description,
+      amount,
     }
-  
-    return rows;
-  }
+  })
+}
 
-  export function markAnomalies(data: Transaction[]): Transaction[] {
-    return data.map((tx) => ({
-      ...tx,
-      isAnomaly: Math.abs(tx.amount) > 1000,
-    }));
-  }
-  
+export function markAnomalies(rows: Transaction[]): Transaction[] {
+  return rows.map((tx) => ({
+    ...tx,
+    isAnomaly: tx.amount < 0 && Math.abs(tx.amount) > 1000, // ✅ only negative spending flagged
+  }))
+}

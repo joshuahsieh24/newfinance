@@ -95,7 +95,8 @@ export async function POST(req: NextRequest) {
   console.log("[score] Sending payload:", payload);
 
   try {
-    const response = await fetch("http://localhost:8000/score", {
+    const mlApiUrl = process.env.ML_API_URL || "http://localhost:8000";
+    const response = await fetch(`${mlApiUrl}/score`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

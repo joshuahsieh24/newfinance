@@ -24,6 +24,12 @@ export function Navbar() {
             >
               About
             </Link>
+            <Link 
+              href="/test-security" 
+              className="text-slate-600 hover:text-slate-900 transition-colors font-medium"
+            >
+              Security Test
+            </Link>
           </div>
         </div>
       </div>

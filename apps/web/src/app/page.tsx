@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { CsvUpload } from "./components/csv-upload"
 import { CsvPreview } from "./components/csv-preview"
-import { Navbar } from "./components/navbar"
 import { Footer } from "./components/footer"
 import { parseCsv, Transaction, markAnomalies } from "../lib/parseCsv"
 import { generateInsight } from "../lib/insight"
@@ -111,17 +110,24 @@ Briefly explain why this might be risky and suggest one action the user can take
             gptInsight = await generateGptInsight(tx, modelScore, features)
           }
 
-          // Insert into Supabase (non-blocking)
-          const user_id = "00000000-0000-0000-0000-000000000000"
-          supabase.from("transactions").insert({
-            user_id,
-            date: tx.date,
-            description: tx.description,
-            amount: tx.amount,
-            is_anomaly: tx.isAnomaly || modelFlag,
-            model_score: modelScore,
-            gpt_insight: gptInsight,
+                  // Insert into Supabase using secure API
+        try {
+          await fetch("/api/transactions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: "00000000-0000-0000-0000-000000000000",
+              date: tx.date,
+              description: tx.description,
+              amount: tx.amount,
+              is_anomaly: tx.isAnomaly || modelFlag,
+              model_score: modelScore,
+              gpt_insight: gptInsight,
+            }),
           })
+        } catch (error) {
+          console.error("Failed to insert transaction:", error)
+        }
 
           return { 
             ...tx, 
@@ -152,8 +158,6 @@ Briefly explain why this might be risky and suggest one action the user can take
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white flex flex-col">
-      <Navbar />
-
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-3xl mx-auto space-y-12">
           <header className="text-center space-y-4">

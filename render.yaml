@@ -1,0 +1,28 @@
+services:
+  # Frontend Next.js service
+  - type: web
+    name: financeai-frontend
+    env: node
+    buildCommand: cd apps/web && npm install -g pnpm && pnpm install && pnpm build
+    startCommand: cd apps/web && npm install -g pnpm && pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ML_API_URL
+        value: https://financeai-ml-api.onrender.com
+
+  # ML API service
+  - type: web
+    name: financeai-ml-api
+    env: python
+    buildCommand: cd services/ml-api && pip install -r requirements.txt
+    startCommand: cd services/ml-api && uvicorn model_api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: /opt/render/project/src/services/ml-api

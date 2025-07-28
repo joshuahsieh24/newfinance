@@ -1,11 +1,8 @@
-import { Navbar } from "../components/navbar"
 import { Footer } from "../components/footer"
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white flex flex-col">
-      <Navbar />
-
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-4xl mx-auto space-y-12">
           <header className="text-center space-y-4">

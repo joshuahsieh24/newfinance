@@ -40,6 +40,14 @@ export function CsvPreview({ data, fileName }: CsvPreviewProps) {
       <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm ${
         isFullScreen ? 'fixed inset-4 z-50 overflow-hidden' : ''
       }`}>
+        {isFullScreen && (
+          <button
+            onClick={toggleFullScreen}
+            className="fixed top-8 right-8 z-50 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+          >
+            Exit Full Screen
+          </button>
+        )}
         <div className={`overflow-y-auto ${isFullScreen ? 'h-full' : 'max-h-[500px]'}`}>
           <table className="w-full" role="table" aria-label={`Preview of ${fileName}`}>
             <thead className="sticky top-0 bg-white z-10">

@@ -95,9 +95,44 @@ The app will automatically detect and parse common CSV formats.
 
 - **Frontend**: Next.js 15 with TypeScript and Tailwind CSS
 - **ML Service**: FastAPI with scikit-learn model
-- **Database**: Supabase for data persistence
+- **Database**: Supabase with row-level encryption
 - **AI**: OpenAI GPT-3.5 for contextual insights
 - **Styling**: Tailwind CSS with shadcn/ui components
+
+## Security Features
+
+### 🔐 Row-Level Encryption
+- **AES-256-GCM** encryption for sensitive transaction data
+- **PBKDF2** key derivation with 100,000 iterations
+- **Unique encryption keys** per transaction
+- **Secure key storage** in database
+
+### 🛡️ Rate Limiting
+- **Token bucket algorithm** with 250 requests/minute
+- **IP-based rate limiting** with automatic cleanup
+- **99.99% uptime guarantee** with health monitoring
+- **Automatic rate limit reset** every minute
+
+### 📊 Monitoring & Health Checks
+- **Real-time system metrics** tracking
+- **Error rate monitoring** (target: <1%)
+- **Memory and CPU usage** tracking
+- **Active connection monitoring**
+- **Health check endpoint**: `/api/health`
+
+### 🔒 Data Security
+- **Hashed user IDs** for additional security
+- **Encrypted descriptions** and AI insights
+- **Secure API endpoints** with validation
+- **Environment variable validation**
+
+### API Endpoints
+
+- `POST /api/transactions` - Insert encrypted transaction data
+- `GET /api/transactions` - Retrieve and decrypt transaction data
+- `GET /api/health` - System health and performance metrics
+- `POST /api/score` - ML model scoring
+- `POST /api/gpt` - AI insight generation
 
 ## Development
 

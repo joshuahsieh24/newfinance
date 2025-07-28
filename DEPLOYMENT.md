@@ -36,7 +36,7 @@ git push origin main
    
    **Build Command**:
    ```bash
-   cd services/ml-api && pip install -r requirements.txt
+   cd services/ml-api && pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
    ```
    
    **Start Command**:
@@ -118,6 +118,19 @@ If you prefer automatic deployment:
 3. **Build Failures**:
    - Check all dependencies are in `requirements.txt`
    - Verify Node.js version compatibility
+
+4. **Scikit-learn Build Errors**:
+   - **Solution 1**: Use the updated `requirements.txt` with specific versions
+   - **Solution 2**: Try using `requirements-simple.txt` (without scikit-learn)
+   - **Solution 3**: Use Docker deployment instead of direct Python deployment
+
+### **Scikit-learn Build Issues:**
+
+If you encounter scikit-learn compilation errors:
+
+1. **Try the updated requirements.txt** (already includes specific versions)
+2. **Use Docker deployment** instead of direct Python deployment
+3. **Alternative**: Use `requirements-simple.txt` and modify the model loading
 
 ### **Environment Variables Checklist**:
 

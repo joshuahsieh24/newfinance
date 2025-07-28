@@ -19,7 +19,7 @@ git push origin main
 
 2. **Verify these files exist**:
 - ✅ `render.yaml` (Render configuration)
-- ✅ `services/ml-api/model_api.py` (ML API)
+- ✅ `services/ml-api/model_api.py` (ML API with mock model)
 - ✅ `services/ml-api/requirements.txt` (Python dependencies)
 - ✅ `apps/web/next.config.ts` (Next.js config)
 
@@ -45,7 +45,6 @@ git push origin main
    ```
 
 5. **Add Environment Variables**:
-   - `MODEL_PATH`: `financeai_lgbm.pkl`
    - `PYTHONPATH`: `/opt/render/project/src/services/ml-api`
 
 6. **Deploy** and note the URL (e.g., `https://financeai-ml-api.onrender.com`)
@@ -78,16 +77,7 @@ git push origin main
 
 4. **Deploy** and get your frontend URL
 
-### **Step 4: Upload ML Model**
-
-1. **Upload your model file** to the ML API service:
-   - Go to your ML API service in Render
-   - Click "Files" tab
-   - Upload `financeai_lgbm.pkl` to the root directory
-
-2. **Redeploy the ML API service** to load the model
-
-### **Step 5: Test Deployment**
+### **Step 4: Test Deployment**
 
 1. **Test ML API**: Visit `https://financeai-ml-api.onrender.com/health`
 2. **Test Frontend**: Visit your frontend URL
@@ -107,30 +97,18 @@ If you prefer automatic deployment:
 
 ### **Common Issues:**
 
-1. **ML Model Not Found**:
-   - Ensure `financeai_lgbm.pkl` is uploaded to ML API service
-   - Check `MODEL_PATH` environment variable
-
-2. **Frontend Can't Connect to ML API**:
+1. **Frontend Can't Connect to ML API**:
    - Verify `ML_API_URL` environment variable
    - Check ML API service is running
 
-3. **Build Failures**:
+2. **Build Failures**:
    - Check all dependencies are in `requirements.txt`
    - Verify Node.js version compatibility
 
-4. **Scikit-learn Build Errors**:
-   - **Solution 1**: Use the updated `requirements.txt` with specific versions
-   - **Solution 2**: Try using `requirements-simple.txt` (without scikit-learn)
-   - **Solution 3**: Use Docker deployment instead of direct Python deployment
-
-### **Scikit-learn Build Issues:**
-
-If you encounter scikit-learn compilation errors:
-
-1. **Try the updated requirements.txt** (already includes specific versions)
-2. **Use Docker deployment** instead of direct Python deployment
-3. **Alternative**: Use `requirements-simple.txt` and modify the model loading
+3. **Mock Model Behavior**:
+   - The mock model simulates LightGBM predictions
+   - Risk scores are based on transaction amount, time, and merchant frequency
+   - This is for demonstration purposes
 
 ### **Environment Variables Checklist**:
 
@@ -141,7 +119,6 @@ If you encounter scikit-learn compilation errors:
 - ✅ `ML_API_URL`
 
 **ML API Service**:
-- ✅ `MODEL_PATH`
 - ✅ `PYTHONPATH`
 
 ## 📊 Monitoring
@@ -163,3 +140,14 @@ To update your deployment:
 - **Paid Plans**: Start at $7/month for always-on services
 
 Your app will be live at your frontend URL! 🎉
+
+## 🤖 Mock Model Details
+
+The ML API uses a mock model that simulates LightGBM predictions:
+
+- **High amount transactions** (>$3000) get higher risk scores
+- **Late night transactions** (before 6 AM or after 10 PM) are flagged
+- **Infrequent merchants** (first-time transactions) are considered riskier
+- **Random variation** is added for realistic demo behavior
+
+This allows the full application to work without scikit-learn compilation issues on Render.

@@ -29,5 +29,3 @@ services:
     envVars:
       - key: PYTHONPATH
         value: /opt/render/project/src/services/ml-api
-      - key: MODEL_PATH
-        value: financeai_lgbm.pkl

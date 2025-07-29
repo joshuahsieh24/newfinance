@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '../../../lib/supabase'
 import { rateLimiter } from '../../../lib/rate-limiter'
-import { RowLevelEncryption } from '../../../lib/encryption'
+import { RowLevelEncryption } from '../../../lib/encryption-wasm'
 
 // Rate limiting middleware
 async function checkRateLimit(req: NextRequest): Promise<NextResponse | null> {
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate encryption key for this transaction
-    const encryptionKey = RowLevelEncryption.generateKey()
+    const encryptionKey = await RowLevelEncryption.generateKey()
     
     // Encrypt sensitive data
     const encryptedDescription = await RowLevelEncryption.encrypt(description, encryptionKey)

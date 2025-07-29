@@ -1,0 +1,1 @@
+/Users/mac/Documents/coding/finance-insights-ai/financeai/apps/web/src/lib/wasm/target/wasm32-unknown-unknown/release/financeai_encryption.wasm: /Users/mac/Documents/coding/finance-insights-ai/financeai/apps/web/src/lib/wasm/src/lib.rs

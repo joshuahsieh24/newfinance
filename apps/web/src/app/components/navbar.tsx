@@ -30,6 +30,12 @@ export function Navbar() {
             >
               Security Test
             </Link>
+            <Link 
+              href="/test-encryption" 
+              className="text-slate-600 hover:text-slate-900 transition-colors font-medium"
+            >
+              Encryption Test
+            </Link>
           </div>
         </div>
       </div>

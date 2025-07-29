@@ -9,7 +9,8 @@ Upload your bank CSV file and the app will:
 - Run each transaction through a machine learning model to calculate risk scores
 - Generate AI-powered insights for high-risk transactions
 - Flag anomalies based on both rule-based logic and ML predictions
-- Store all analyzed data in Supabase for future reference
+- Store all analyzed data in Supabase with Rust WASM-powered encryption
+- Provide enterprise-grade security with AES-256-GCM encryption and PBKDF2 key derivation
 
 The ML model considers factors like transaction amount, merchant frequency, category patterns, and timing to assess risk. Incoming payments (money received) are treated with lower sensitivity than outgoing payments.
 
@@ -21,11 +22,13 @@ The ML model considers factors like transaction amount, merchant frequency, cate
 - **Full Screen View**: Expand the table for better readability of advice
 - **Anomaly Filtering**: Toggle to show only flagged transactions
 - **Data Persistence**: All transactions are stored in Supabase
+- **Rust WASM Encryption**: High-performance AES-256-GCM encryption with Web Crypto API fallback
 - **Responsive Design**: Works on desktop and mobile
 
 ## Prerequisites
 
 - Node.js 18+ and pnpm (or npm)
+- Rust and wasm-pack (for building encryption module)
 - Supabase account and project
 - OpenAI API key (for AI insights)
 
@@ -39,7 +42,21 @@ cd financeai
 pnpm install
 ```
 
-### 2. Environment variables
+### 2. Build the Rust WASM encryption module
+
+The app uses a Rust WebAssembly module for high-performance encryption. Build it first:
+
+```bash
+cd apps/web/src/lib/wasm
+./build.sh
+```
+
+This will:
+- Install wasm-pack if not already installed
+- Compile the Rust encryption module to WebAssembly
+- Output the compiled files to `apps/web/public/wasm/`
+
+### 3. Environment variables
 
 Create a `.env.local` file in the `apps/web` directory:
 
@@ -53,7 +70,7 @@ Get your Supabase credentials from:
 - Supabase Dashboard → Project Settings → API
 - Copy the Project URL and anon/public key
 
-### 3. Start the ML service
+### 4. Start the ML service
 
 The app uses a FastAPI service for ML model scoring. Start it in a separate terminal:
 
@@ -64,7 +81,7 @@ python model_api.py
 
 This will start the ML service on port 8000.
 
-### 4. Start the Next.js app
+### 5. Start the Next.js app
 
 ```bash
 cd apps/web
@@ -97,57 +114,33 @@ The app will automatically detect and parse common CSV formats.
 - **ML Service**: FastAPI with scikit-learn model
 - **Database**: Supabase with row-level encryption
 - **AI**: OpenAI GPT-3.5 for contextual insights
+- **Encryption**: Rust WASM module with AES-256-GCM and PBKDF2
 - **Styling**: Tailwind CSS with shadcn/ui components
 
 ## Security Features
 
-### 🔐 Row-Level Encryption
+### 🔐 Rust WASM Encryption
 - **AES-256-GCM** encryption for sensitive transaction data
 - **PBKDF2** key derivation with 100,000 iterations
-- **Unique encryption keys** per transaction
-- **Secure key storage** in database
+- **Random IV and salt** generation for each encryption
+- **Web Crypto API fallback** if WASM module fails to load
+- **Base64 encoding** for safe storage and transmission
 
-### 🛡️ Rate Limiting
-- **Token bucket algorithm** with 250 requests/minute
-- **IP-based rate limiting** with automatic cleanup
-- **99.99% uptime guarantee** with health monitoring
-- **Automatic rate limit reset** every minute
+### 🛡️ Performance Benefits
+- **Native Rust performance** for cryptographic operations
+- **Smaller bundle size** compared to pure JavaScript implementations
+- **Memory safety** guaranteed by Rust's type system
+- **Cross-platform compatibility** through WebAssembly
 
-### 📊 Monitoring & Health Checks
-- **Real-time system metrics** tracking
-- **Error rate monitoring** (target: <1%)
-- **Memory and CPU usage** tracking
-- **Active connection monitoring**
-- **Health check endpoint**: `/api/health`
+### 🔧 Development
+The encryption module is located in `apps/web/src/lib/wasm/`:
+- `src/lib.rs` - Main Rust implementation
+- `Cargo.toml` - Rust dependencies
+- `build.sh` - Build script for wasm-pack
+- `encryption-wasm.ts` - TypeScript wrapper with fallback
 
-### 🔒 Data Security
-- **Hashed user IDs** for additional security
-- **Encrypted descriptions** and AI insights
-- **Secure API endpoints** with validation
-- **Environment variable validation**
-
-### API Endpoints
-
-- `POST /api/transactions` - Insert encrypted transaction data
-- `GET /api/transactions` - Retrieve and decrypt transaction data
-- `GET /api/health` - System health and performance metrics
-- `POST /api/score` - ML model scoring
-- `POST /api/gpt` - AI insight generation
-
-## Development
-
-The project uses a monorepo structure:
-- `apps/web/` - Next.js frontend
-- `services/ml-api/` - FastAPI ML service
-- `apps/web/public/model/` - ML model files
-
-## Troubleshooting
-
-- **ML service not responding**: Make sure the FastAPI service is running on port 8000
-- **No AI insights**: Check your OpenAI API key is valid
-- **Database errors**: Verify your Supabase credentials
-- **CSV parsing issues**: Ensure your CSV has the required columns
-
-## License
-
-[Your license here] 
+To rebuild the WASM module after changes:
+```bash
+cd apps/web/src/lib/wasm
+./build.sh
+``` 
